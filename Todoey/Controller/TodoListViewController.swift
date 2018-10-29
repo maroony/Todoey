@@ -9,12 +9,25 @@
 import UIKit
 
 class TodoListViewController: UITableViewController {
-  var itemArray = ["Find Mike", "Buy Eggs", "Destroy Something"]
+  var itemArray = [Item]()
   let userDefaults = UserDefaults.standard
-  
+
   override func viewDidLoad() {
     super.viewDidLoad()
-    if let items = userDefaults.array(forKey: "TodoListArray") as? [String] {
+
+    var newItem = Item()
+    newItem.title = "Andy"
+    itemArray.append(newItem)
+
+    newItem = Item()
+    newItem.title = "Kathy"
+    itemArray.append(newItem)
+
+    newItem = Item()
+    newItem.title = "Anton"
+    itemArray.append(newItem)
+    
+    if let items = userDefaults.array(forKey: "TodoListArray") as? [Item] {
       itemArray = items
     }
     // Do any additional setup after loading the view, typically from a nib.
@@ -24,7 +37,11 @@ class TodoListViewController: UITableViewController {
 
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell = tableView.dequeueReusableCell(withIdentifier: "TodoItemCell", for: indexPath)
-    cell.textLabel?.text = itemArray[indexPath.row]
+
+    let item = itemArray[indexPath.row]
+    cell.textLabel?.text = item.title
+
+    cell.accessoryType = item.done ? .checkmark : .none
     return cell
   }
 
@@ -34,13 +51,11 @@ class TodoListViewController: UITableViewController {
 
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     print(indexPath.row)
-    tableView.deselectRow(at: indexPath, animated: true)
 
-    if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-      tableView.cellForRow(at: indexPath)?.accessoryType = .none
-    } else {
-      tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-    }
+    itemArray[indexPath.row].done = !itemArray[indexPath.row].done
+
+    tableView.reloadData()
+    tableView.deselectRow(at: indexPath, animated: true)
   }
 
   // Mark: - Add new item
@@ -57,7 +72,9 @@ class TodoListViewController: UITableViewController {
     let action = UIAlertAction(title: "Add Item", style: .default) { _ in
       if let text = textField.text {
         if text.trimmingCharacters(in: [" "]) != "" {
-          self.itemArray.append(text)
+          let newItem = Item()
+          newItem.title = text
+          self.itemArray.append(newItem)
           self.userDefaults.set(self.itemArray, forKey: "TodoListArray")
           self.tableView.reloadData()
         }

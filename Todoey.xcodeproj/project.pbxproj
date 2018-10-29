@@ -82,10 +82,10 @@
 		A1B97D992185DF7F0089A099 /* Todoey */ = {
 			isa = PBXGroup;
 			children = (
+				A1B97D9A2185DF7F0089A099 /* AppDelegate.swift */,
 				A1281CDD218706E400048F85 /* Controller */,
 				A1281CDC218706CD00048F85 /* View */,
 				A1281CDB2187066800048F85 /* Model */,
-				A1B97D9A2185DF7F0089A099 /* AppDelegate.swift */,
 				A1B97DA12185DF7F0089A099 /* Assets.xcassets */,
 				A1B97DA62185DF7F0089A099 /* Info.plist */,
 			);

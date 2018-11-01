@@ -1,14 +1,16 @@
 //
-import RealmSwift
 //  CategoryViewController.swift
 //  Todoey
 //
 //  Created by Andy on 30.10.18.
 //  Copyright © 2018 Andy Schoenemann. All rights reserved.
 //
+
+import ChameleonFramework
+import RealmSwift
 import UIKit
 
-class CategoryViewController: UITableViewController {
+class CategoryViewController: SwipeTableViewController {
   let realm = try! Realm()
   var categories: Results<Category>?
   
@@ -20,14 +22,36 @@ class CategoryViewController: UITableViewController {
   // MARK: - TableView Datasource Methods
   
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
-    cell.textLabel?.text = categories?[indexPath.row].name ?? "No Categories added yet"
+    let cell = super.tableView(tableView, cellForRowAt: indexPath)
+    
+    if let category = categories?[indexPath.row] {
+      cell.textLabel?.text = category.name
+      guard let categoryColor = UIColor(hexString: category.color) else { fatalError() }
+      cell.backgroundColor = categoryColor
+      cell.textLabel?.textColor = ContrastColorOf(categoryColor, returnFlat: true)
+    }
     return cell
   }
   
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return categories?.count ?? 1
   }
+  
+  // MARK: - Delete Categries
+  
+  override func updateModel(at indexPath: IndexPath) {
+    if let category = self.categories?[indexPath.row] {
+      do {
+        try realm.write {
+          self.realm.delete(category)
+        }
+      } catch {
+        print("Error on deleting category, \(error)")
+      }
+    }
+  }
+  
+  // MARK: - Add New Categories
   
   @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
     let alert = UIAlertController(title: "Add New Category", message: "", preferredStyle: .alert)
@@ -43,6 +67,7 @@ class CategoryViewController: UITableViewController {
         if text.trimmingCharacters(in: [" "]) != "" {
           let newCategory = Category()
           newCategory.name = text
+          newCategory.color = UIColor.randomFlat.hexValue()
           self.save(category: newCategory)
         }
       }

@@ -46,9 +46,7 @@ class TodoListViewController: SwipeTableViewController {
     navBar.tintColor = ContrastColorOf(navBarColor, returnFlat: true)
     navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(navBarColor, returnFlat: true)]
     // remove borders
-    searchBar.isTranslucent = false
-    searchBar.barTintColor = navBarColor
-    searchBar.backgroundImage  = UIImage()
+    searchBar.setBackgroundImage(UIImage(), for: .top, barMetrics: .default)
     searchBar.backgroundColor = navBarColor
   }
 
